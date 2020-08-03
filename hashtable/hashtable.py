@@ -52,8 +52,7 @@ class HashTable:
         Implement this, and/or DJB2.
         """
         hash = 14695981039346656037
-        bytes_ = key.encode()
-        for byte in bytes_:
+        for byte in key.encode():
             hash *= 1099511628211
             hash ^= byte
         return hash
@@ -65,9 +64,8 @@ class HashTable:
         Implement this, and/or FNV-1.
         """
         hash = 5381
-        bytes_ = key.encode()
-        for byte in bytes_:
-            hash = (hash << 5) + hash + byte
+        for byte in key.encode():
+            hash = ((hash << 5) + hash) + byte
         return hash
 
     def hash_index(self, key):
@@ -96,7 +94,11 @@ class HashTable:
 
         Implement this.
         """
-        self.storage[self.hash_index(key)] = None
+        idx = self.hash_index(key)
+        if not self.storage[idx]:
+            print(f'Error: no entry found for key "{key}"')
+        else:
+            self.storage[idx] = None
 
     def get(self, key):
         """
