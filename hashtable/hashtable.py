@@ -29,18 +29,24 @@ class HashTable:
     def __len__(self):
         return self.length
 
+    def __getitem__(self, key):
+        return self.get(key)
+
+    def __delitem__(self, key):
+        return self.delete(key)
+
     def __iter__(self):
-        self.keys = self.keys()
+        self.key_cache = self.keys()
         self.idx = 0
         return self
 
     def __next__(self):
-        if self.idx < len(self.keys):
-            return_val = self.keys[self.idx]
+        if self.idx < len(self.key_cache):
+            return_val = self.key_cache[self.idx]
             self.idx += 1
             return return_val
         else:
-            del self.keys
+            del self.key_cache
             raise StopIteration
 
     def get_num_slots(self):
@@ -282,7 +288,7 @@ if __name__ == "__main__":
     ht.put("line_12", "And stood awhile in thought.")
 
     print("")
-
+    
     # Test storing beyond capacity
     for i in range(1, 13):
         print(ht.get(f"line_{i}"))
