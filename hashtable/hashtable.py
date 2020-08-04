@@ -3,10 +3,10 @@ class HashTableEntry:
     Linked List hash table key/value pair
     """
 
-    def __init__(self, key, value):
+    def __init__(self, key, value, next_=None):
         self.key = key
         self.value = value
-        self.next = None
+        self.next = next_
 
 
 # Hash table can't have fewer than this many slots
@@ -88,8 +88,27 @@ class HashTable:
 
         Implement this.
         """
-        self.length += 1
-        self.storage[self.hash_index(key)] = HashTableEntry(key, value)
+        idx = self.hash_index(key)
+        entry = self.storage[idx]
+        # If the slot is empty, initialize it with this new entry
+        if not entry:
+            self.length += 1
+            self.storage[idx] = HashTableEntry(key, value)
+            return
+
+        while True:
+            # If the key is in the table, change its value
+            if entry.key == key:
+                entry.value = value
+                break
+            entry = entry.next
+
+            # If key not in table, create a new entry
+            if entry is None:
+                new_entry = HashTableEntry(key, value, self.storage[idx])
+                self.storage[idx] = new_entry
+                self.length += 1
+                break
 
     def delete(self, key):
         """
@@ -101,7 +120,7 @@ class HashTable:
         """
         idx = self.hash_index(key)
         if not self.storage[idx]:
-            print(f'Error: no entry found for key "{key}"')
+            raise KeyError(key)
         else:
             self.storage[idx] = None
 
@@ -126,18 +145,19 @@ class HashTable:
 
     def __retrieve_data(self, mode):
         if mode not in ["both", "keys", "values"]:
-            return print("Invalid mode for this function")
+            print("Invalid mode for this function")
+            return
         data = [None] * self.length
         idx = 0
         for entry in self.storage:
             if entry is None:
                 continue
-            data[idx] = self.__filter_data(entry, mode)
-            idx += 1
-            while entry.next:
-                entry = entry.next
+            while True:
                 data[idx] = self.__filter_data(entry, mode)
                 idx += 1
+                entry = entry.next
+                if entry is None:
+                    break
         return data
 
     def items(self):
