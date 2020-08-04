@@ -8,6 +8,12 @@ class HashTableEntry:
         self.value = value
         self.next = next_
 
+    def __str__(self):
+        return f"[{self.key}]: {self.value}"
+
+    def __repr__(self):
+        return f"<HashTableEntry {str(self)} >"
+
 
 # Hash table can't have fewer than this many slots
 MIN_CAPACITY = 8
@@ -28,6 +34,21 @@ class HashTable:
 
     def __len__(self):
         return self.length
+
+    def __str__(self):
+        return (
+            "{\n\t"
+            + "\n\t".join([str(i) for i in self.__retrieve_data("objects")])
+            + "\n}"
+        )
+
+    def __repr__(self):
+        return (
+            "<HashTable \n\t"
+            + "\n\t".join([repr(i) for i in self.__retrieve_data("objects")])
+            + "\n>"
+        )
+    
 
     def __getitem__(self, key):
         return self.get(key)
@@ -222,9 +243,11 @@ class HashTable:
             return entry.key
         elif mode == "values":
             return entry.value
+        elif mode == "objects":
+            return entry
 
     def __retrieve_data(self, mode):
-        if mode not in ["both", "keys", "values"]:
+        if mode not in ["both", "keys", "values", "objects"]:
             print("Invalid mode for this function")
             return
 
@@ -292,6 +315,8 @@ if __name__ == "__main__":
 
     print("")
 
+    print(ht)
+
     ht["new_entry"] = "hello"
     print(ht["new_entry"])
 
@@ -299,7 +324,7 @@ if __name__ == "__main__":
         print(ht[key])
 
     del ht["new_entry"]
-    
+
     # Test storing beyond capacity
     for i in range(1, 13):
         print(ht.get(f"line_{i}"))
