@@ -192,22 +192,22 @@ class TestHashTable(unittest.TestCase):
         return_value = ht.get("key-9")
         self.assertEqual(return_value, "val-9")
 
-    # def test_hash_table_auto_enlarge(self):
-    #     ht = HashTable(8)
+    def test_hash_table_auto_enlarge(self):
+        ht = HashTable(8)
+        
+        ht.put("key-0", "val-0")
+        ht.put("key-1", "val-1")
+        ht.put("key-2", "val-2")
+        ht.put("key-3", "val-3")
+        self.assertEqual(ht.get_num_slots(), 8)
 
-    #     ht.put("key-0", "val-0")
-    #     ht.put("key-1", "val-1")
-    #     ht.put("key-2", "val-2")
-    #     ht.put("key-3", "val-3")
-    #     self.assertEqual(ht.get_num_slots(), 8)
-
-    #     ht.put("key-4", "val-4")
-    #     ht.put("key-5", "val-5")
-    #     ht.put("key-6", "val-6")
-    #     ht.put("key-7", "val-7")
-    #     ht.put("key-8", "val-8")
-    #     ht.put("key-9", "val-9")
-    #     self.assertEqual(ht.get_num_slots(), 16)
+        ht.put("key-4", "val-4")
+        ht.put("key-5", "val-5")
+        ht.put("key-6", "val-6")
+        ht.put("key-7", "val-7")
+        ht.put("key-8", "val-8")
+        ht.put("key-9", "val-9")
+        self.assertEqual(ht.get_num_slots(), 16)
 
     # # Uncomment the test below for the stretch goal
     # def test_hash_table_auto_shrink(self):

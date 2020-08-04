@@ -94,22 +94,25 @@ class HashTable:
         if not entry:
             self.length += 1
             self.storage[idx] = HashTableEntry(key, value)
-            return
 
-        while True:
-            # If the key is in the table, change its value
-            if entry.key == key:
-                entry.value = value
-                break
-            entry = entry.next
+        else:
+            while True:
+                # If the key is in the table, change its value
+                if entry.key == key:
+                    entry.value = value
+                    return
+                entry = entry.next
 
-            # If key not in table, create a new entry
-            if entry is None:
-                new_entry = HashTableEntry(key, value, self.storage[idx])
-                self.storage[idx] = new_entry
-                self.length += 1
-                break
+                # If key not in table, create a new entry
+                if entry is None:
+                    new_entry = HashTableEntry(key, value, self.storage[idx])
+                    self.storage[idx] = new_entry
+                    self.length += 1
+                    break
 
+        # Auto-resize if necessary
+        if(self.get_load_factor() > 0.7):
+            self.resize(self.capacity * 2)
 
     def delete(self, key):
         """
@@ -121,6 +124,7 @@ class HashTable:
         """
         idx = self.hash_index(key)
         entry = self.storage[idx]
+        return_val = None
 
         if entry is None:
             raise KeyError(key)
@@ -128,15 +132,23 @@ class HashTable:
         # Special case: entry is the head of the LinkedList
         if entry.key == key:
             self.storage[idx] = entry.next
-            return entry.value
+            self.length -= 1
+            return_val = entry.value
 
-        while entry.next is not None:
-            if entry.next.key == key:
-                val = entry.next.value
-                entry.next = entry.next.next
-                return val
         else:
-            raise KeyError(key)
+            while entry.next is not None:
+                if entry.next.key == key:
+                    val = entry.next.value
+                    entry.next = entry.next.next
+                    self.length -= 1
+                    return_val = val
+            else:
+                raise KeyError(key)
+
+        # Auto-resize if necessary
+        if(self.get_load_factor() < 0.2):
+            self.resize(self.capacity//2)
+        return return_val
 
     def get(self, key, default=None):
         """
@@ -198,7 +210,21 @@ class HashTable:
 
         Implement this.
         """
-        pass
+        if new_capacity < MIN_CAPACITY:
+            new_capacity = MIN_CAPACITY
+
+        old_items = self.items()
+
+        self.capacity = new_capacity
+        self.storage = [None] * self.capacity
+        self.length = 0
+
+        for entry in old_items:
+            if not entry:
+                continue
+            key = entry[0]
+            value = entry[1]
+            self.put(key, value)
 
 
 if __name__ == "__main__":
