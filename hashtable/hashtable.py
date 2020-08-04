@@ -161,6 +161,9 @@ class HashTable:
                     return_val = entry.next.value
                     entry.next = entry.next.next
                     self.length -= 1
+                    break
+
+                entry = entry.next
             # If we made it thru the list without finding it
             else:
                 raise KeyError(key)
