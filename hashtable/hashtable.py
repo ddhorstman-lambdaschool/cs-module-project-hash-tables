@@ -28,6 +28,19 @@ class HashTable:
 
     def __len__(self):
         return self.length
+    
+    def __iter__(self):
+        self.keys = self.keys()
+        self.idx = 0
+        return self
+    def __next__(self):
+        if self.idx < len(self.keys):
+            return_val = self.keys[self.idx]
+            self.idx += 1
+            return return_val
+        else:
+            del self.keys
+            raise StopIteration
 
     def get_num_slots(self):
         """
@@ -92,8 +105,8 @@ class HashTable:
         entry = self.storage[idx]
         # If the slot is empty, initialize it with this new entry
         if not entry:
-            self.length += 1
             self.storage[idx] = HashTableEntry(key, value)
+            self.length += 1
 
         else:
             while True:
@@ -101,8 +114,8 @@ class HashTable:
                 if entry.key == key:
                     entry.value = value
                     return
-                entry = entry.next
 
+                entry = entry.next
                 # If key not in table, create a new entry
                 if entry is None:
                     new_entry = HashTableEntry(key, value, self.storage[idx])
@@ -137,17 +150,20 @@ class HashTable:
 
         else:
             while entry.next is not None:
+                # If the next item is the target,
+                # cut it out of the list
                 if entry.next.key == key:
-                    val = entry.next.value
+                    return_val = entry.next.value
                     entry.next = entry.next.next
                     self.length -= 1
-                    return_val = val
+            # If we made it thru the list without finding it
             else:
                 raise KeyError(key)
 
         # Auto-resize if necessary
         if(self.get_load_factor() < 0.2):
             self.resize(self.capacity//2)
+
         return return_val
 
     def get(self, key, default=None):
@@ -160,8 +176,10 @@ class HashTable:
         """
         idx = self.hash_index(key)
         entry = self.storage[idx]
+
         if not entry:
             return default
+
         while True:
             if entry.key == key:
                 return entry.value
@@ -181,11 +199,16 @@ class HashTable:
         if mode not in ["both", "keys", "values"]:
             print("Invalid mode for this function")
             return
+
         data = [None] * self.length
         idx = 0
+
+        # Loop through each index
         for entry in self.storage:
             if entry is None:
                 continue
+
+            # Loop though each LinkedList item
             while True:
                 data[idx] = self.__filter_data(entry, mode)
                 idx += 1
@@ -219,11 +242,7 @@ class HashTable:
         self.storage = [None] * self.capacity
         self.length = 0
 
-        for entry in old_items:
-            if not entry:
-                continue
-            key = entry[0]
-            value = entry[1]
+        for key, value in old_items:
             self.put(key, value)
 
 
