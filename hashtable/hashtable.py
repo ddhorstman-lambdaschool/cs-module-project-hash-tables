@@ -32,6 +32,9 @@ class HashTable:
     def __getitem__(self, key):
         return self.get(key)
 
+    def __setitem__(self, key, value):
+        return self.put(key, value)
+
     def __delitem__(self, key):
         return self.delete(key)
 
@@ -288,6 +291,14 @@ if __name__ == "__main__":
     ht.put("line_12", "And stood awhile in thought.")
 
     print("")
+
+    ht["new_entry"] = "hello"
+    print(ht["new_entry"])
+
+    for key in ht:
+        print(ht[key])
+
+    del ht["new_entry"]
     
     # Test storing beyond capacity
     for i in range(1, 13):
