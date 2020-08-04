@@ -28,11 +28,12 @@ class HashTable:
 
     def __len__(self):
         return self.length
-    
+
     def __iter__(self):
         self.keys = self.keys()
         self.idx = 0
         return self
+
     def __next__(self):
         if self.idx < len(self.keys):
             return_val = self.keys[self.idx]
@@ -92,6 +93,10 @@ class HashTable:
         """
         return self.fnv1(key) % self.capacity
         # return self.djb2(key) % self.capacity
+
+    def clear(self):
+        self.length = 0
+        self.storage = [None] * self.capacity
 
     def put(self, key, value):
         """
@@ -165,6 +170,17 @@ class HashTable:
             self.resize(self.capacity//2)
 
         return return_val
+
+    def pop(self, key, default=None):
+        try:
+            return self.delete(key)
+        except:
+            return None
+
+    def update(self, entries):
+        if type(entries) is dict:
+            for key, value in entries.items():
+                self.put(key, value)
 
     def get(self, key, default=None):
         """
