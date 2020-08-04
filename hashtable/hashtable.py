@@ -23,7 +23,12 @@ class HashTable:
 
     def __init__(self, capacity):
         self.capacity = capacity if capacity > MIN_CAPACITY else MIN_CAPACITY
+        self.length = 0
         self.storage = [None] * self.capacity
+
+    def __len__(self):
+        return self.length
+
 
     def get_num_slots(self):
         """
@@ -43,7 +48,7 @@ class HashTable:
 
         Implement this.
         """
-        pass
+        return self.length / self.capacity
 
     def fnv1(self, key):
         """
@@ -111,6 +116,36 @@ class HashTable:
         entry = self.storage[self.hash_index(key)]
         return entry.value if entry else None
 
+    def filter_data_(self,entry,mode):
+        if mode == "both":
+            return (entry.key,entry.value)
+        elif mode == "keys":
+            return entry.key
+        elif mode == "values":
+            return entry.value
+
+    def retrieve_data_(self, mode):
+        if mode not in ["both","keys","values"]:
+            return print("Invalid mode for this fuction")
+        data = [None] * self.length
+        idx = 0
+        for entry in self.storage:
+            if entry is None:
+                continue
+            data[idx] = filter_data_(entry,mode)
+            idx += 1
+            while entry.next:
+                data[idx] = filter_data_(entry,modeF)
+                idx += 1
+        return data
+
+    def items(self):
+        return self.retrieve_data_("both")
+    def keys(self):
+        return self.retrieve_data_("keys")
+    def values(self):
+        return self.retrieve_data_("values")
+        
     def resize(self, new_capacity):
         """
         Changes the capacity of the hash table and
