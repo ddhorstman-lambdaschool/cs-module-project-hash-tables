@@ -110,6 +110,7 @@ class HashTable:
                 self.length += 1
                 break
 
+
     def delete(self, key):
         """
         Remove the value stored with the given key.
@@ -119,10 +120,23 @@ class HashTable:
         Implement this.
         """
         idx = self.hash_index(key)
-        if not self.storage[idx]:
+        entry = self.storage[idx]
+
+        if entry is None:
             raise KeyError(key)
+
+        # Special case: entry is the head of the LinkedList
+        if entry.key == key:
+            self.storage[idx] = entry.next
+            return entry.value
+
+        while entry.next is not None:
+            if entry.next.key == key:
+                val = entry.next.value
+                entry.next = entry.next.next
+                return val
         else:
-            self.storage[idx] = None
+            raise KeyError(key)
 
     def get(self, key, default=None):
         """
