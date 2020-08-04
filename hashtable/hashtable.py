@@ -44,11 +44,10 @@ class HashTable:
 
     def __repr__(self):
         return (
-            "<HashTable \n\t"
+            "<HashTable\n\t"
             + "\n\t".join([repr(i) for i in self.__retrieve_data("objects")])
             + "\n>"
         )
-    
 
     def __getitem__(self, key):
         return self.get(key)
@@ -72,6 +71,42 @@ class HashTable:
         else:
             del self.key_cache
             raise StopIteration
+
+    def clear(self):
+        self.length = 0
+        self.storage = [None] * self.capacity
+
+    def copy(self):
+        ht = HashTable(self.capacity)
+        for key, value in self.items():
+            ht[key] = value
+        return ht
+
+    @staticmethod
+    def fromkeys(keys, value=None):
+        ht = HashTable(len(keys))
+        for key in keys:
+            ht[key] = value
+        return ht
+
+    def pop(self, key, default=None):
+        try:
+            return self.delete(key)
+        except:
+            return None
+
+    def setdefault(self, key, value=None):
+        current_value = self.get(key)
+        if current_value:
+            return current_value
+        else:
+            self.put(key, value)
+            return value
+
+    def update(self, entries):
+        if type(entries) is dict:
+            for key, value in entries.items():
+                self.put(key, value)
 
     def get_num_slots(self):
         """
@@ -123,10 +158,6 @@ class HashTable:
         """
         return self.fnv1(key) % self.capacity
         # return self.djb2(key) % self.capacity
-
-    def clear(self):
-        self.length = 0
-        self.storage = [None] * self.capacity
 
     def put(self, key, value):
         """
@@ -204,17 +235,6 @@ class HashTable:
 
         return return_val
 
-    def pop(self, key, default=None):
-        try:
-            return self.delete(key)
-        except:
-            return None
-
-    def update(self, entries):
-        if type(entries) is dict:
-            for key, value in entries.items():
-                self.put(key, value)
-
     def get(self, key, default=None):
         """
         Retrieve the value stored with the given key.
@@ -236,15 +256,33 @@ class HashTable:
             if entry is None:
                 return default
 
-    def __filter_data(self, entry, mode):
-        if mode == "both":
-            return (entry.key, entry.value)
-        elif mode == "keys":
-            return entry.key
-        elif mode == "values":
-            return entry.value
-        elif mode == "objects":
-            return entry
+    def resize(self, new_capacity):
+        """
+        Changes the capacity of the hash table and
+        rehashes all key/value pairs.
+
+        Implement this.
+        """
+        if new_capacity < MIN_CAPACITY:
+            new_capacity = MIN_CAPACITY
+
+        old_items = self.items()
+
+        self.capacity = new_capacity
+        self.storage = [None] * self.capacity
+        self.length = 0
+
+        for key, value in old_items:
+            self.put(key, value)
+
+    def items(self):
+        return self.__retrieve_data("both")
+
+    def keys(self):
+        return self.__retrieve_data("keys")
+
+    def values(self):
+        return self.__retrieve_data("values")
 
     def __retrieve_data(self, mode):
         if mode not in ["both", "keys", "values", "objects"]:
@@ -268,33 +306,15 @@ class HashTable:
                     break
         return data
 
-    def items(self):
-        return self.__retrieve_data("both")
-
-    def keys(self):
-        return self.__retrieve_data("keys")
-
-    def values(self):
-        return self.__retrieve_data("values")
-
-    def resize(self, new_capacity):
-        """
-        Changes the capacity of the hash table and
-        rehashes all key/value pairs.
-
-        Implement this.
-        """
-        if new_capacity < MIN_CAPACITY:
-            new_capacity = MIN_CAPACITY
-
-        old_items = self.items()
-
-        self.capacity = new_capacity
-        self.storage = [None] * self.capacity
-        self.length = 0
-
-        for key, value in old_items:
-            self.put(key, value)
+    def __filter_data(self, entry, mode):
+        if mode == "both":
+            return (entry.key, entry.value)
+        elif mode == "keys":
+            return entry.key
+        elif mode == "values":
+            return entry.value
+        elif mode == "objects":
+            return entry
 
 
 if __name__ == "__main__":
@@ -315,8 +335,6 @@ if __name__ == "__main__":
 
     print("")
 
-    print(ht)
-
     ht["new_entry"] = "hello"
     print(ht["new_entry"])
 
@@ -326,18 +344,18 @@ if __name__ == "__main__":
     del ht["new_entry"]
 
     # Test storing beyond capacity
-    for i in range(1, 13):
-        print(ht.get(f"line_{i}"))
+    # for i in range(1, 13):
+    #     print(ht.get(f"line_{i}"))
 
-    # Test resizing
-    old_capacity = ht.get_num_slots()
-    ht.resize(ht.capacity * 2)
-    new_capacity = ht.get_num_slots()
+    # # Test resizing
+    # old_capacity = ht.get_num_slots()
+    # ht.resize(ht.capacity * 2)
+    # new_capacity = ht.get_num_slots()
 
-    print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+    # print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
-    # Test if data intact after resizing
-    for i in range(1, 13):
-        print(ht.get(f"line_{i}"))
+    # # Test if data intact after resizing
+    # for i in range(1, 13):
+    #     print(ht.get(f"line_{i}"))
 
     print("")
