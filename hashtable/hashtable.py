@@ -124,7 +124,7 @@ class HashTable:
         else:
             self.storage[idx] = None
 
-    def get(self, key):
+    def get(self, key, default=None):
         """
         Retrieve the value stored with the given key.
 
@@ -132,8 +132,16 @@ class HashTable:
 
         Implement this.
         """
-        entry = self.storage[self.hash_index(key)]
-        return entry.value if entry else None
+        idx = self.hash_index(key)
+        entry = self.storage[idx]
+        if not entry:
+            return default
+        while True:
+            if entry.key == key:
+                return entry.value
+            entry = entry.next
+            if entry is None:
+                return default
 
     def __filter_data(self, entry, mode):
         if mode == "both":
