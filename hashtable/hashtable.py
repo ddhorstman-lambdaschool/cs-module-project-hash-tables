@@ -70,6 +70,7 @@ class HashTable:
             return return_val
         else:
             del self.key_cache
+            del self.idx
             raise StopIteration
 
     def clear(self):
@@ -79,20 +80,20 @@ class HashTable:
     def copy(self):
         ht = HashTable(self.capacity)
         for key, value in self.items():
-            ht[key] = value
+            ht.put(key,value)
         return ht
 
     @staticmethod
     def fromkeys(keys, value=None):
         ht = HashTable(len(keys))
         for key in keys:
-            ht[key] = value
+            ht.put(key,value)
         return ht
 
     def pop(self, key, default=None):
         try:
             return self.delete(key)
-        except:
+        except KeyError:
             return None
 
     def setdefault(self, key, value=None):
