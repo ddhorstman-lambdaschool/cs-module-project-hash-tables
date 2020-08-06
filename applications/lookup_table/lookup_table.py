@@ -13,6 +13,7 @@ def slowfun_too_slow(x, y):
 
 powers = {}
 factorials = {0: 1}
+
 def factorial(n):
     global factorials
     if n not in factorials:

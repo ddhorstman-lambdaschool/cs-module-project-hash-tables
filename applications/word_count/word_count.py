@@ -4,7 +4,7 @@ import re
 def word_count(s):
     blacklist = re.compile(r'[":;,\.\-\+\=/\\\|\[\]\{\}\(\)\*\^&]')
     words = blacklist.sub("", s)
-    words = re.sub('\s+', ' ', words)
+    words = re.sub(r'\s+', ' ', words)
     words = words.lower().split(' ')
     word_count = {}
     for word in words:

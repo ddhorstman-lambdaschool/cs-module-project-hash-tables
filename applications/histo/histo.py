@@ -30,6 +30,6 @@ for count in range(max_count, 0, -1):
     if count not in sorted_list:
         continue
     for word in sorted(sorted_list[count]):
-        print(word, end='')
+        print(word, end=' ')
         print(' ' * (longest_word_length-len(word)), end='')
         print('#' * count)
