@@ -9,7 +9,7 @@ def expensive_seq(x, y, z):
     # print("called with",identifier)
     if x <= 0:
         cache[identifier] = y + z
-    else:
+    elif identifier not in cache:
         cache[identifier] = (
             expensive_seq(x-1, y+1, z)
             + expensive_seq(x-2, y+2, z*2)
