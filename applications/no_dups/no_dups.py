@@ -1,5 +1,10 @@
 def no_dups(s):
-    # Your code here
+    words = s.split(' ')
+    wordlist = {}
+    for word in words:
+        if word not in wordlist:
+            wordlist[word] = "value doesn't matter"
+    return " ".join(wordlist)
 
 
 
